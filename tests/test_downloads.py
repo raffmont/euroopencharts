@@ -4,7 +4,7 @@ from pathlib import Path
 import pytest
 
 from euroopencharts.config import load_config
-from euroopencharts.downloads import download_configured_sources, validate_high_resolution_sources
+from euroopencharts.downloads import download_configured_sources, validate_high_resolution_sources, _overpass_to_geojson
 
 
 def _config(tmp_path: Path, url: str, required: bool = True) -> Path:
@@ -98,6 +98,41 @@ def test_optional_download_records_omission(tmp_path: Path):
     assert manifest in outputs
     metadata = json.loads(manifest.read_text(encoding="utf-8"))
     assert metadata["status"] == "omitted"
+
+
+def test_optional_placeholder_download_records_configuration_required(tmp_path: Path):
+    config = load_config(_config(tmp_path, "https://example.invalid/replace-with-source.bin", required=False))
+    outputs = download_configured_sources(config, tmp_path / "out")
+    manifest = tmp_path / "out/metadata/source_downloads/fixture_source.json"
+    assert manifest in outputs
+    metadata = json.loads(manifest.read_text(encoding="utf-8"))
+    assert metadata["status"] == "configuration_required"
+
+
+def test_overpass_elements_convert_to_geojson_without_synthetic_data(tmp_path: Path):
+    config = load_config(_config(tmp_path, "file:///unused"))
+    data = {
+        "elements": [
+            {
+                "type": "node",
+                "id": 1,
+                "lat": 40.8,
+                "lon": 14.2,
+                "tags": {"leisure": "marina", "name": "Fixture Marina"},
+            },
+            {
+                "type": "way",
+                "id": 2,
+                "center": {"lat": 40.7, "lon": 14.1},
+                "tags": {"natural": "bay", "name": "Fixture Bay"},
+            },
+        ]
+    }
+    geojson = _overpass_to_geojson(data, config)
+    assert geojson["synthetic_data_used"] is False
+    assert len(geojson["features"]) == 2
+    assert geojson["features"][0]["properties"]["feature_class"] == "marina"
+    assert geojson["features"][1]["properties"]["feature_class"] == "bay"
 
 
 def test_high_resolution_sources_require_quality_metadata(tmp_path: Path):

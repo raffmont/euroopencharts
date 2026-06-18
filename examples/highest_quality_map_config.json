@@ -225,10 +225,12 @@
     },
     {
       "source_id": "openseamap_osm",
-      "url": "https://example.invalid/replace-with-osm-openseamap-aoi-extract.osm.pbf",
-      "target": "../data/sources/highest_quality/seamarks/openseamap_tyrrhenian_east.osm.pbf",
+      "provider": "overpass_seamarks",
+      "url": "https://overpass-api.de/api/interpreter",
+      "target": "../data/sources/highest_quality/seamarks/openseamap_tyrrhenian_east.geojson",
       "required": false,
-      "skip_existing": true
+      "skip_existing": true,
+      "timeout_seconds": 180
     }
   ],
   "rendering": {

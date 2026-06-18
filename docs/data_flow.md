@@ -4,6 +4,7 @@
 config.json
   -> validate configuration
   -> validate OpenBridge SVG symbol dictionary when configured
+  -> prepare high-quality configured downloads and preflight checks when requested
   -> acquire/validate actual sources
   -> validate source resolution and freshness metadata
   -> validate MPA geometry and rules if configured

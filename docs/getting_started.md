@@ -5,11 +5,11 @@ This tutorial runs the actual-data-only pipeline unattended.
 ```bash
 python -m venv .venv
 . .venv/bin/activate
-pip install -e .
+python -m pip install -e .
 python run_actual_data_only.py --config config.json
 ```
 
-The actual-data renderer uses Basemap GSHHS/ETOPO data. A fresh environment must install the project dependencies with `pip install -e .`; the high-quality example also requires `basemap-data-hires` for `resolution=h`.
+The source acquisition and preflight commands do not require Basemap. The graphical actual-data renderer uses Basemap GSHHS/ETOPO data; install renderer extras with `python -m pip install -e ".[figures]"` on a Python version supported by Basemap. Always use `python -m pip`, not bare `pip`, so packages install into the interpreter that will run the command. If your Python is newer than Basemap supports, run `prepare-high-quality` on that environment and render from a compatible environment.
 
 Outputs are written under the `data_root` declared in `config.json`.
 
@@ -31,6 +31,7 @@ The default configuration uses actual local coastline/relief data available thro
 The high-quality run uses a dedicated single configuration file:
 
 ```bash
+euroopencharts prepare-high-quality --config examples/highest_quality_map_config.json
 python examples/create_highest_quality_map.py --config examples/highest_quality_map_config.json
 ```
 
@@ -42,3 +43,11 @@ Before making this a production run, replace all placeholder `source_downloads` 
 - local OpenBridge SVG assets under `resources/symbols/openbridge/`.
 
 The workflow records source download manifests, source quality metadata, OpenBridge symbol configuration, MPA provenance, and explicit omission reports for unavailable optional layers.
+
+For production gates, run preparation with:
+
+```bash
+euroopencharts prepare-high-quality --config examples/highest_quality_map_config.json --strict
+```
+
+The strict mode fails when required configured downloads still use placeholder URLs, current OSM/OpenSeaMap extracts are stale or missing, MPA geometry/rules are incomplete, or required OpenBridge SVG assets are absent.

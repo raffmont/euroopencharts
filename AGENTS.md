@@ -10,6 +10,10 @@ This file is normative. All agents, contributors, scripts, workflow tasks, tests
 
 The project SHALL NOT fabricate, approximate, hallucinate, or draw placeholder nautical data.
 
+The project SHALL NOT add scaffolding in place of working behavior. Contributions must implement real working code, real validation, real acquisition/preparation logic, or real documentation that matches executable behavior.
+
+The project SHALL NOT add placeholder components in operational paths. Components, commands, examples, workflows, and configured providers must be real active components, or they must fail/omit explicitly with provenance and a clear reason.
+
 Forbidden in production outputs:
 
 - synthetic bathymetry;

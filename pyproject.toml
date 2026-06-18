@@ -10,10 +10,15 @@ readme = "README.md"
 requires-python = ">=3.10"
 license = {text = "MIT"}
 authors = [{name = "Raffaele Montella / meteo@uniparthenope research prototype"}]
-dependencies = ["basemap>=1.4", "basemap-data-hires>=1.3", "matplotlib>=3.7", "numpy>=1.24"]
+dependencies = ["matplotlib>=3.7", "numpy>=1.24"]
 
 [project.optional-dependencies]
-figures = ["basemap>=1.4", "basemap-data-hires>=1.3", "matplotlib>=3.7", "numpy>=1.24"]
+figures = [
+    "basemap>=2.0; python_version < '3.14'",
+    "basemap-data-hires>=1.3; python_version < '3.14'",
+    "matplotlib>=3.7",
+    "numpy>=1.24",
+]
 test = ["pytest>=8"]
 
 [project.scripts]

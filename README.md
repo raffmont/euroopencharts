@@ -23,7 +23,7 @@ The actual-data workflow produces outputs only from configured real source data 
 ```bash
 python -m venv .venv
 . .venv/bin/activate
-pip install -e .
+python -m pip install -e .
 euroopencharts run-example --data-root data/example --workers 4
 ```
 
@@ -72,19 +72,19 @@ The high-quality example is configured by `examples/highest_quality_map_config.j
 python examples/create_highest_quality_map.py --config examples/highest_quality_map_config.json
 ```
 
-The example supports config-driven downloads for authoritative/open bathymetry and seamark sources such as GEBCO, EMODnet, and OpenStreetMap/OpenSeaMap extracts. Replace the `source_downloads` URLs with official AOI-specific dataset URLs before making those downloads required. Missing optional downloads are recorded in the output metadata; missing required downloads fail fast. The renderer uses high-resolution GSHHS/ETOPO assets and produces PNG/PDF outputs with the required navigation warning.
+The example supports config-driven downloads for authoritative/open bathymetry and seamark sources such as GEBCO, EMODnet, and OpenStreetMap/OpenSeaMap extracts. The OpenStreetMap/OpenSeaMap layer is automated through an Overpass AOI query. Replace the GEBCO, EMODnet, and MPA placeholder URLs with official AOI-specific dataset URLs before making those downloads required. Missing optional downloads are recorded in the output metadata; missing required downloads fail fast. The renderer uses high-resolution GSHHS/ETOPO assets and produces PNG/PDF outputs with the required navigation warning.
 
 For a production-quality run:
 
-1. Download or export the latest official AOI subsets for GEBCO, EMODnet Bathymetry, OpenStreetMap/OpenSeaMap seamarks, and authoritative MPA geometry/rules.
-2. Put those files under `data/sources/highest_quality/` or update the paths in `examples/highest_quality_map_config.json`.
-3. Replace every `https://example.invalid/...` entry in `source_downloads` with the official URL used to acquire the source.
-4. Set required high-value layers to `"required": true` only after their official source URL, license, provenance, CRS, and quality metadata are complete.
-5. Keep the OpenStreetMap/OpenSeaMap harbor, marina, bay, anchorage, mooring, light, buoy, and beacon extract fresher than 30 days.
-6. Keep MPA geometry and legal-rule files synchronized with the official authority; stale or incomplete MPA rules must fail or be explicitly omitted.
-7. Export OpenBridge Icons as local SVG files under `resources/symbols/openbridge/`, following the license for the icon pack from [OpenBridge Icons](https://www.openbridge.no/cases/openbridge-icons).
-8. Ensure the `symbols.dictionary` entries in the config point to those local SVG assets. Silent fallback symbols are forbidden.
-9. Run:
+9. Prepare and validate configured sources:
+
+```bash
+euroopencharts prepare-high-quality --config examples/highest_quality_map_config.json
+```
+
+Use `--write-config` only when each placeholder download entry already has an explicit `official_url` field. Use `--strict` for production gates: required placeholder URLs, stale current extracts, incomplete MPA files, and missing OpenBridge SVG assets fail the command.
+
+10. Run:
 
 ```bash
 python examples/create_highest_quality_map.py --config examples/highest_quality_map_config.json

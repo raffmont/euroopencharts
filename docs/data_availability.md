@@ -25,7 +25,7 @@ When an optional layer is unavailable, the manifest records the omission. When a
 - EMODnet Bathymetry regional products, configured as the preferred European high-resolution bathymetry source where available;
 - GSHHS high-resolution coastline rendering;
 - ETOPO1 one-arc-minute shaded relief, used only as a background and not as authoritative numeric bathymetry;
-- current OpenStreetMap/OpenSeaMap vector features, with a maximum age of 30 days for harbors, marinas, bays, seamarks, and related nautical features;
+- current OpenStreetMap/OpenSeaMap vector features, downloaded through the configured Overpass AOI query, with a maximum age of 30 days for harbors, marinas, bays, seamarks, and related nautical features;
 - official MPA geometry and legal-rule files, refreshed or verified against the official authority before production.
 
 The example keeps external downloads optional until real official URLs, provenance, license, CRS, and redistribution terms are configured. Set sources to required only after those fields are complete.

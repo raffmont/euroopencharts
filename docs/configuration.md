@@ -68,3 +68,19 @@ Example dictionary entry:
   }
 }
 ```
+
+## High-quality preparation command
+
+The acquisition/preflight checklist is automated by:
+
+```bash
+euroopencharts prepare-high-quality --config path/to/config.json
+```
+
+The command reads only the supplied JSON config. It downloads configured `source_downloads`, writes source download and quality manifests, checks current-extract freshness, checks MPA geometry/rule file presence, validates OpenBridge local SVG assets, and writes `metadata/high_quality_preparation.json`.
+
+The `overpass_seamarks` provider builds an AOI-bounded Overpass query from the configured `area` and writes a GeoJSON extract for OpenStreetMap/OpenSeaMap harbors, marinas, bays, anchorages, moorings, lights, buoys, beacons, and other `seamark:type` features. GEBCO, EMODnet, and official MPA datasets must still use official configured URLs or local authoritative files; the workflow does not guess them.
+
+`--write-config` replaces placeholder `url` values only when the same entry already provides an explicit `official_url`. It does not guess official MPA sources or OpenBridge assets.
+
+`--strict` fails when any required high-quality input is missing, stale, incomplete, or still configured with a placeholder URL.

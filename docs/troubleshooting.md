@@ -10,13 +10,13 @@ python run_actual_data_only.py --config config.json
 
 ## Basemap is missing
 
-The actual-data renderer requires `basemap` and `basemap-data-hires` for GSHHS coastline and ETOPO rendering. In the active virtual environment, run:
+The actual-data renderer requires `basemap` and `basemap-data-hires` for GSHHS coastline and ETOPO rendering. These packages are optional because Basemap does not publish wheels for every Python release. In a compatible active virtual environment, run:
 
 ```bash
-pip install -e .
+python -m pip install -e ".[figures]"
 ```
 
-Then rerun the example.
+Use `python -m pip show basemap basemap-data-hires matplotlib` to verify packages are installed into the same interpreter reported by `python --version`. If bare `pip show` reports a different `.venv/lib/pythonX.Y` path than `python --version`, recreate the virtual environment or use `python -m pip` consistently. If pip reports that no Basemap version matches your Python version, keep using that environment for `euroopencharts prepare-high-quality`, and use a Basemap-compatible Python environment for rendering.
 
 ## MPA source missing
 

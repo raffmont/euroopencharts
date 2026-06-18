@@ -68,10 +68,14 @@ def _write_actual_provenance(root: Path, config: EOCConfig) -> list[Path]:
 
 
 def _render_actual_chart(root: Path, config: EOCConfig) -> list[Path]:
-    if importlib.util.find_spec("mpl_toolkits.basemap") is None:
+    try:
+        basemap_spec = importlib.util.find_spec("mpl_toolkits.basemap")
+    except ModuleNotFoundError:
+        basemap_spec = None
+    if basemap_spec is None:
         raise ConfigError(
             "The actual-data renderer requires Basemap and high-resolution Basemap data. "
-            "Install project dependencies with `pip install -e .` or install "
+            "Install renderer dependencies with `pip install -e \".[figures]\"` or install "
             "`basemap` and `basemap-data-hires` in the active environment."
         )
     import matplotlib
