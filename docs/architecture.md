@@ -12,22 +12,27 @@ The prototype uses a small local executor named `MiniDAGonStarExecutor`. The fin
 
 - Gridded depth.
 - Depth contours.
-- Seafloor type placeholder layer in the data model.
+- Seafloor coverage when supplied by authoritative high-resolution sources.
 - Lights and buoys.
-- Harbors and marinas.
+- Harbors, marinas, bays, ports, anchorages, and moorings from current authoritative/open vector extracts.
 - Protected anchorages.
 - Points of interest.
-- User-generated content placeholders.
+- Marine Protected Areas with official geometry, zones, permissions, prohibitions, and legal-rule metadata.
+- Signal K or user-contributed content only when explicitly sourced, licensed, and marked with provenance.
 
 ## Offline outputs
 
 The workflow builds an offline bundle containing OpenCPN supplemental layers, Signal K resources, metadata, provenance, QC reports, and figures.
 
-## Production replacement tasks
+## Production acquisition tasks
 
-Replace the synthetic source tasks with:
+Actual-data production workflows should use:
 
-- Copernicus Marine / EMODnet bathymetry downloads.
+- GEBCO, Copernicus Marine, and EMODnet bathymetry downloads.
 - OpenSeaMap / OSM Overpass or planet extract processing.
 - Official open hydrographic and port authority datasets.
 - Signal K crowdsourced sounding ingestion.
+
+## Symbol architecture
+
+Production symbol selection is declarative. The single JSON configuration file defines `symbols.libraries` and `symbols.dictionary`. OpenBridge SVG icons are the preferred symbol source whenever applicable and legally permitted. Raster-only icons, proprietary chart symbols, and silent symbol substitutions are forbidden.

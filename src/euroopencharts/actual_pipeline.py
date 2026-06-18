@@ -6,6 +6,7 @@ import json
 import zipfile
 
 from .config import EOCConfig, load_config
+from .downloads import download_configured_sources
 from .mpa import process_mpa_layer
 
 
@@ -30,6 +31,7 @@ def run_actual_data_render(root: Path | None = None, workers: int | None = None,
     config = load_config(config_path)
     root = ensure_dir(root or config.data_root)
     outputs: list[Path] = []
+    outputs.extend(download_configured_sources(config, root))
     outputs.extend(_write_actual_provenance(root, config))
     outputs.extend(process_mpa_layer(config, root))
     outputs.extend(_render_actual_chart(root, config))
@@ -81,13 +83,14 @@ def _render_actual_chart(root: Path, config: EOCConfig) -> list[Path]:
     ax = fig.add_subplot(111)
     ax.set_facecolor('white')
 
+    rendering = config.data.get('rendering', {})
     m = Basemap(
         projection='merc',
         llcrnrlon=west, llcrnrlat=south,
         urcrnrlon=east, urcrnrlat=north,
-        resolution='i', ax=ax
+        resolution=rendering.get('basemap_resolution', 'i'), ax=ax
     )
-    m.etopo(scale=0.5, alpha=0.45, zorder=0)
+    m.etopo(scale=float(rendering.get('etopo_scale', 0.5)), alpha=float(rendering.get('etopo_alpha', 0.45)), zorder=0)
     m.drawmapboundary(fill_color='white', linewidth=0)
     m.fillcontinents(color='#f3e27a', lake_color='white', zorder=4)
     m.drawcoastlines(color='black', linewidth=1.3, zorder=6)
@@ -125,7 +128,8 @@ def _render_actual_chart(root: Path, config: EOCConfig) -> list[Path]:
     ax.set_xticks([]); ax.set_yticks([])
     for spine in ax.spines.values():
         spine.set_visible(False)
-    fig.savefig(png, dpi=200, bbox_inches='tight', pad_inches=0.02)
+    dpi = int(rendering.get('output_dpi', 200))
+    fig.savefig(png, dpi=dpi, bbox_inches='tight', pad_inches=0.02)
     fig.savefig(pdf, bbox_inches='tight', pad_inches=0.02)
     plt.close(fig)
     return [png, pdf]

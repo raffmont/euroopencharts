@@ -1,0 +1,245 @@
+{
+  "project": {
+    "name": "EuroOpenCharts",
+    "version": "0.2.0",
+    "navigation_warning": "Experimental scientific prototype. Not for navigation.",
+    "actual_data_only": true
+  },
+  "data_root": "../data/highest_quality_map",
+  "area": {
+    "id": "tyrrhenian-east",
+    "name": "Eastern Central-Southern Tyrrhenian Sea",
+    "crs": "EPSG:4326",
+    "west": 13.65,
+    "south": 40.48,
+    "east": 14.75,
+    "north": 41.02
+  },
+  "execution": {
+    "backend": "local",
+    "workers": 4,
+    "cache": true,
+    "resume": true
+  },
+  "outputs": {
+    "formats": ["geojson", "json", "png", "pdf", "zip"],
+    "render_chart": true,
+    "build_offline_bundle": true
+  },
+  "symbols": {
+    "libraries": {
+      "openbridge_icons": {
+        "name": "OpenBridge Icons",
+        "source_url": "https://www.openbridge.no/cases/openbridge-icons",
+        "upstream_resources": [
+          "https://www.figma.com",
+          "https://github.com/openbridge"
+        ],
+        "license": "OpenBridge license; verify redistribution rights before bundling assets",
+        "type": "svg",
+        "local_root": "../resources/symbols/openbridge",
+        "required": true,
+        "notes": "Use local/offline SVG exports from the OpenBridge icon collection for maritime HMI symbols whenever applicable. Raster-only icons and silent substitutions are forbidden."
+      }
+    },
+    "dictionary": {
+      "harbor": {
+        "library": "openbridge_icons",
+        "asset": "harbor.svg",
+        "fallback_allowed": false
+      },
+      "marina": {
+        "library": "openbridge_icons",
+        "asset": "marina.svg",
+        "fallback_allowed": false
+      },
+      "anchorage": {
+        "library": "openbridge_icons",
+        "asset": "anchorage.svg",
+        "fallback_allowed": false
+      },
+      "mooring": {
+        "library": "openbridge_icons",
+        "asset": "mooring.svg",
+        "fallback_allowed": false
+      },
+      "bay": {
+        "library": "openbridge_icons",
+        "asset": "bay.svg",
+        "fallback_allowed": false
+      },
+      "light": {
+        "library": "openbridge_icons",
+        "asset": "light.svg",
+        "fallback_allowed": false
+      },
+      "buoy": {
+        "library": "openbridge_icons",
+        "asset": "buoy.svg",
+        "fallback_allowed": false
+      },
+      "beacon": {
+        "library": "openbridge_icons",
+        "asset": "beacon.svg",
+        "fallback_allowed": false
+      },
+      "marine_protected_area": {
+        "library": "openbridge_icons",
+        "asset": "protected-area.svg",
+        "fallback_allowed": false
+      }
+    }
+  },
+  "layers": {
+    "coastline": {
+      "enabled": true,
+      "required": true,
+      "source_id": "local_basemap_gshhs"
+    },
+    "relief_background": {
+      "enabled": true,
+      "required": true,
+      "source_id": "local_basemap_etopo1"
+    },
+    "marine_protected_areas": {
+      "enabled": true,
+      "required": false,
+      "source_id": "official_mpa_geojson",
+      "path": "../data/sources/highest_quality/mpa/marine_protected_areas.geojson",
+      "rules_path": "../data/sources/highest_quality/mpa/marine_protected_area_rules.json",
+      "render": true,
+      "fail_if_rules_missing_when_geometry_present": true
+    },
+    "harbors_marinas_bays": {
+      "enabled": true,
+      "required": false,
+      "source_id": "openseamap_osm",
+      "feature_classes": ["harbor", "marina", "bay", "anchorage", "mooring"],
+      "minimum_required_tags": ["name", "source", "timestamp"],
+      "fail_if_extract_older_than_days": 30
+    }
+  },
+  "sources": {
+    "local_basemap_gshhs": {
+      "name": "GSHHS coastlines distributed with Basemap data package",
+      "role": "coastline and land-water rendering",
+      "license": "See installed Basemap/GSHHS data license",
+      "actual_dataset": true,
+      "quality": {
+        "resolution_class": "high",
+        "intended_use": "High-resolution coastline rendering for the AOI",
+        "nominal_scale": "GSHHS high-resolution coastline dataset selected by Basemap resolution=h",
+        "feature_resolution": "High-resolution vector coastline; preserve source geometry, no manual simplification"
+      }
+    },
+    "local_basemap_etopo1": {
+      "name": "ETOPO1 shaded relief image distributed with Basemap data package",
+      "role": "relief and bathymetric background rendering, not numeric bathymetry",
+      "license": "See installed Basemap/ETOPO1 data license",
+      "actual_dataset": true,
+      "quality": {
+        "resolution_class": "high",
+        "intended_use": "High-resolution shaded relief background only",
+        "pixel_resolution_arc_seconds": 60,
+        "feature_resolution": "ETOPO1 one-arc-minute raster background; not used as authoritative numeric bathymetry"
+      }
+    },
+    "gebco_grid": {
+      "name": "GEBCO global gridded bathymetry",
+      "role": "best available open bathymetry candidate for future numeric depth products",
+      "license": "GEBCO Terms of Use; verify suitability before redistribution",
+      "actual_dataset": true,
+      "quality": {
+        "resolution_class": "very_high",
+        "intended_use": "Highest available open gridded bathymetry for the AOI",
+        "grid_resolution_arc_seconds": 15,
+        "feature_resolution": "Use the newest official GEBCO regional subset available for the AOI; do not resample upward to fake detail"
+      },
+      "notes": "Configure url below to a GEBCO regional subset or mirrored archive. The workflow records provenance and does not fabricate a fallback."
+    },
+    "emodnet_bathymetry": {
+      "name": "EMODnet Bathymetry regional products",
+      "role": "European bathymetry and metadata source candidate",
+      "license": "EMODnet data policy; verify dataset-specific terms before redistribution",
+      "actual_dataset": true,
+      "quality": {
+        "resolution_class": "very_high",
+        "intended_use": "Best European regional bathymetry and uncertainty metadata for the AOI",
+        "grid_resolution_arc_seconds": 3.75,
+        "feature_resolution": "Use the highest-resolution EMODnet Bathymetry product available for the AOI with source metadata"
+      },
+      "notes": "Configure url below to an authoritative EMODnet export/subset for the AOI."
+    },
+    "openseamap_osm": {
+      "name": "OpenStreetMap/OpenSeaMap seamark extract",
+      "role": "open seamarks, lights, harbors, marinas and nautical POIs",
+      "license": "Open Database License (ODbL)",
+      "actual_dataset": true,
+      "quality": {
+        "resolution_class": "high",
+        "intended_use": "Current high-resolution vector seamarks, coastline-adjacent nautical features, harbors, marinas, bays, anchorages, lights and buoys",
+        "feature_resolution": "Use unsimplified AOI vector extract with full OSM/SeaMark tags and timestamped replication metadata",
+        "nominal_scale": "Source vector features; no rendering-time feature fabrication",
+        "requires_current_extract": true
+      },
+      "freshness": {
+        "maximum_age_days": 30,
+        "acquired_at_field": "acquisition_timestamp",
+        "update_policy": "Refresh the OSM/OpenSeaMap AOI extract before production if it is older than 30 days; do not reuse stale harbor, marina, bay, anchorage, buoy, beacon or light lists."
+      },
+      "notes": "Configure url below to an Overpass, Geofabrik, or other ODbL-compliant extract."
+    },
+    "official_mpa_geojson": {
+      "name": "Official or openly licensed Marine Protected Areas input",
+      "role": "MPA geometry, zones, permissions and rules",
+      "license": "MUST be provided with the actual source dataset",
+      "actual_dataset": true,
+      "quality": {
+        "resolution_class": "high",
+        "intended_use": "Authoritative MPA polygons, zones, permissions and rules",
+        "feature_resolution": "Official unsimplified polygon/multipolygon geometry and legal-rule attributes, including official identifier, designation, status, managing authority, legal instrument, zone IDs, zone names and zone classifications",
+        "nominal_scale": "Official source scale must be recorded with the source dataset"
+      },
+      "freshness": {
+        "maximum_age_days": 180,
+        "acquired_at_field": "acquisition_timestamp",
+        "update_policy": "Verify MPA geometry and legal-rule files against the official authority before production; stale files must be refreshed or omitted with a manifest reason."
+      },
+      "notes": "The example keeps this optional unless authoritative geometry and rules URLs are configured."
+    }
+  },
+  "source_downloads": [
+    {
+      "source_id": "gebco_grid",
+      "url": "https://example.invalid/replace-with-official-gebco-aoi-subset.nc",
+      "target": "../data/sources/highest_quality/bathymetry/gebco_tyrrhenian_east.nc",
+      "required": false,
+      "skip_existing": true
+    },
+    {
+      "source_id": "emodnet_bathymetry",
+      "url": "https://example.invalid/replace-with-official-emodnet-aoi-export.zip",
+      "target": "../data/sources/highest_quality/bathymetry/emodnet_tyrrhenian_east.zip",
+      "required": false,
+      "skip_existing": true
+    },
+    {
+      "source_id": "openseamap_osm",
+      "url": "https://example.invalid/replace-with-osm-openseamap-aoi-extract.osm.pbf",
+      "target": "../data/sources/highest_quality/seamarks/openseamap_tyrrhenian_east.osm.pbf",
+      "required": false,
+      "skip_existing": true
+    }
+  ],
+  "rendering": {
+    "profile": "highest_quality_actual_data",
+    "copyright_safe": true,
+    "show_chart_cell_grid": false,
+    "show_missing_layer_notes": true,
+    "show_mpa_layer": true,
+    "basemap_resolution": "h",
+    "etopo_scale": 1.0,
+    "etopo_alpha": 0.55,
+    "output_dpi": 300
+  }
+}

@@ -28,14 +28,6 @@ Required properties per feature:
 
 ```text
 name
-source_name
-source_url
-license
-```
-
-Recommended properties:
-
-```text
 official_id
 designation
 status
@@ -44,6 +36,18 @@ legal_instrument
 zone_id
 zone_name
 zone_type
+source_name
+source_url
+license
+acquisition_timestamp
+```
+
+Recommended properties:
+
+```text
+source_scale
+processing_timestamp
+confidence
 ```
 
 ## Rules schema
@@ -61,6 +65,10 @@ anchoring
 fishing
 diving
 transit
+speed_limits
+mooring
+temporal_restrictions
+source_reference
 ```
 
 Example structure:
@@ -76,7 +84,11 @@ Example structure:
       "anchoring": "prohibited unless explicitly authorized",
       "fishing": "prohibited",
       "diving": "authorization required",
-      "transit": "regulated"
+      "transit": "regulated",
+      "speed_limits": "as specified by official regulation",
+      "mooring": "prohibited unless explicitly authorized",
+      "temporal_restrictions": "none",
+      "source_reference": "official regulation URL or document identifier"
     }
   }
 }

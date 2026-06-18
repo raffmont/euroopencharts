@@ -20,6 +20,10 @@ The tests validate the engineering contract in `AGENTS.md`:
 - required sources fail fast when missing;
 - optional sources produce omission metadata instead of synthetic fallback data;
 - Marine Protected Area features include provenance, license metadata, zones, permissions, and rules;
+- Marine Protected Area rules include anchoring, fishing, diving, transit, speed limits, mooring, temporal restrictions, and source references;
+- high-quality sources declare measurable resolution or scale metadata;
+- current OpenStreetMap/OpenSeaMap extracts declare freshness metadata;
+- OpenBridge symbols are configured as local SVG assets with license/source metadata and no silent fallback;
 - production outputs report `synthetic_data_used=false`;
 - offline bundles do not contain placeholder restricted-area layers or manually drawn chart-cell products;
 - the documentation and AGENTS contract include the required testing and documentation rules.

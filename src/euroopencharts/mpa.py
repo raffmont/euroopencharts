@@ -19,9 +19,18 @@ def write_json(path: Path, data: dict[str, Any]) -> Path:
 
 REQUIRED_MPA_PROPS = [
     "name",
+    "official_id",
+    "designation",
+    "status",
+    "managing_authority",
+    "legal_instrument",
+    "zone_id",
+    "zone_name",
+    "zone_type",
     "source_name",
     "source_url",
     "license",
+    "acquisition_timestamp",
 ]
 
 REQUIRED_RULE_KEYS = [
@@ -33,6 +42,10 @@ REQUIRED_RULE_KEYS = [
     "fishing",
     "diving",
     "transit",
+    "speed_limits",
+    "mooring",
+    "temporal_restrictions",
+    "source_reference",
 ]
 
 
@@ -143,6 +156,9 @@ def _validate_rules(rules: dict[str, Any], path: Path) -> None:
         missing = [key for key in REQUIRED_RULE_KEYS if key not in item]
         if missing:
             raise ConfigError(f"MPA rules entry {idx} missing keys {missing} in {path}")
+        for key in ["permissions", "prohibitions"]:
+            if not isinstance(item.get(key), list):
+                raise ConfigError(f"MPA rules entry {idx} key '{key}' must be a list in {path}")
 
 
 def _write_mpa_omission(root: Path, reason: str, config: EOCConfig) -> Path:

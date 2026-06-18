@@ -23,3 +23,20 @@ data/actual_data_only/dist/tyrrhenian-east-actual-data-only-bundle.zip
 ```
 
 The default configuration uses actual local coastline/relief data available through the installed Basemap data package. It does not generate synthetic seamarks, depths, marine protected areas, or rules.
+
+## High-quality run
+
+The high-quality run uses a dedicated single configuration file:
+
+```bash
+python examples/create_highest_quality_map.py --config examples/highest_quality_map_config.json
+```
+
+Before making this a production run, replace all placeholder `source_downloads` URLs with official AOI-specific source URLs. Download or configure:
+
+- GEBCO and/or EMODnet high-resolution bathymetry;
+- current OpenStreetMap/OpenSeaMap vector extracts for seamarks, harbors, marinas, bays, anchorages, moorings, lights, buoys, and beacons;
+- authoritative MPA GeoJSON geometry and JSON legal-rule files;
+- local OpenBridge SVG assets under `resources/symbols/openbridge/`.
+
+The workflow records source download manifests, source quality metadata, OpenBridge symbol configuration, MPA provenance, and explicit omission reports for unavailable optional layers.

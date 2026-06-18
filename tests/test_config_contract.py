@@ -57,3 +57,36 @@ def test_load_config_requires_area_crs(tmp_path: Path):
     path.write_text(json.dumps(data), encoding="utf-8")
     with pytest.raises(ConfigError, match="area.crs"):
         load_config(path)
+
+
+def test_openbridge_symbols_require_svg_assets_and_license(tmp_path: Path):
+    path = _minimal_config(tmp_path)
+    data = json.loads(path.read_text(encoding="utf-8"))
+    data["symbols"] = {
+        "libraries": {
+            "openbridge_icons": {
+                "name": "OpenBridge Icons",
+                "source_url": "https://www.openbridge.no/cases/openbridge-icons",
+                "license": "test OpenBridge license metadata",
+                "type": "svg",
+                "local_root": "resources/symbols/openbridge",
+            }
+        },
+        "dictionary": {
+            "harbor": {
+                "library": "openbridge_icons",
+                "asset": "harbor.png",
+                "fallback_allowed": False,
+            }
+        },
+    }
+    path.write_text(json.dumps(data), encoding="utf-8")
+    with pytest.raises(ConfigError, match="local SVG asset"):
+        load_config(path)
+
+
+def test_highest_quality_example_config_loads():
+    config = load_config(Path("examples/highest_quality_map_config.json"))
+    openbridge = config.data["symbols"]["libraries"]["openbridge_icons"]
+    assert openbridge["source_url"] == "https://www.openbridge.no/cases/openbridge-icons"
+    assert config.data["symbols"]["dictionary"]["harbor"]["library"] == "openbridge_icons"

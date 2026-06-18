@@ -65,14 +65,22 @@ def _valid_mpa_geojson(path: Path) -> None:
                         [14.0, 40.6], [14.1, 40.6], [14.1, 40.7], [14.0, 40.7], [14.0, 40.6]
                     ]],
                 },
-                "properties": {
-                    "name": "Test MPA Zone A",
-                    "zone_id": "A",
-                    "source_name": "Test-only authoritative MPA fixture",
-                    "source_url": "file://tests/fixtures/mpa.geojson",
-                    "license": "test fixture license",
-                    "test_fixture": True,
-                },
+                    "properties": {
+                        "name": "Test MPA Zone A",
+                        "official_id": "TEST-MPA-A",
+                        "designation": "test designation",
+                        "status": "active",
+                        "managing_authority": "Test authority",
+                        "legal_instrument": "Test legal act",
+                        "zone_id": "A",
+                        "zone_name": "Strict protection test zone",
+                        "zone_type": "strict_protection",
+                        "source_name": "Test-only authoritative MPA fixture",
+                        "source_url": "file://tests/fixtures/mpa.geojson",
+                        "license": "test fixture license",
+                        "acquisition_timestamp": "2026-01-01T00:00:00Z",
+                        "test_fixture": True,
+                    },
             }
         ],
     }
@@ -93,6 +101,10 @@ def _valid_rules(path: Path) -> None:
                 "fishing": "prohibited",
                 "diving": "permit required",
                 "transit": "allowed",
+                "speed_limits": "not specified in test fixture",
+                "mooring": "not specified in test fixture",
+                "temporal_restrictions": "none in test fixture",
+                "source_reference": "file://tests/fixtures/rules.json",
             }
         },
     }

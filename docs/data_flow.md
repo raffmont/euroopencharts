@@ -3,7 +3,9 @@
 ```text
 config.json
   -> validate configuration
+  -> validate OpenBridge SVG symbol dictionary when configured
   -> acquire/validate actual sources
+  -> validate source resolution and freshness metadata
   -> validate MPA geometry and rules if configured
   -> write provenance and omission reports
   -> render copyright-safe nautical chart figure

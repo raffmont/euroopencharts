@@ -65,3 +65,31 @@ def _validate_minimal(data: dict[str, Any], path: Path) -> None:
             raise ConfigError(f"Missing area.{key} in {path}")
     if data["project"].get("actual_data_only") is not True:
         raise ConfigError("project.actual_data_only must be true for production/actual-data runs")
+    _validate_symbol_libraries(data, path)
+
+
+def _validate_symbol_libraries(data: dict[str, Any], path: Path) -> None:
+    symbols = data.get("symbols", {})
+    if not symbols:
+        return
+    libraries = symbols.get("libraries", {})
+    dictionary = symbols.get("dictionary", {})
+    if not isinstance(libraries, dict) or not isinstance(dictionary, dict):
+        raise ConfigError("symbols.libraries and symbols.dictionary must be objects")
+    if "openbridge_icons" in libraries:
+        lib = libraries["openbridge_icons"]
+        if lib.get("type") != "svg":
+            raise ConfigError("OpenBridge icon library must use SVG/vector assets")
+        for key in ["name", "source_url", "license", "local_root"]:
+            if not lib.get(key):
+                raise ConfigError(f"OpenBridge icon library missing '{key}'")
+    openbridge_classes = [
+        name for name, entry in dictionary.items()
+        if isinstance(entry, dict) and entry.get("library") == "openbridge_icons"
+    ]
+    for name in openbridge_classes:
+        entry = dictionary[name]
+        if not entry.get("asset") or not str(entry["asset"]).endswith(".svg"):
+            raise ConfigError(f"OpenBridge symbol '{name}' must reference a local SVG asset")
+        if "fallback_allowed" in entry and entry["fallback_allowed"] is not False:
+            raise ConfigError(f"OpenBridge symbol '{name}' must not allow silent fallback")
