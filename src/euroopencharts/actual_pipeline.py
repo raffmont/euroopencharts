@@ -64,6 +64,8 @@ def _write_actual_provenance(root: Path, config: EOCConfig) -> list[Path]:
 
 
 def _render_actual_chart(root: Path, config: EOCConfig) -> list[Path]:
+    import matplotlib
+    matplotlib.use("Agg")
     import matplotlib.pyplot as plt
     from matplotlib.patches import Polygon as MplPolygon
     import matplotlib.patheffects as pe

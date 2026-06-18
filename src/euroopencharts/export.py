@@ -95,6 +95,8 @@ def export_chart_rendering(root: Path) -> list[Path]:
     copyrighted tile artwork.
     """
     try:
+        import matplotlib
+        matplotlib.use("Agg")
         import matplotlib.pyplot as plt
         from matplotlib.patches import Polygon, Rectangle
         import matplotlib.patheffects as pe
