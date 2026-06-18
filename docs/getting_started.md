@@ -9,6 +9,8 @@ pip install -e .
 python run_actual_data_only.py --config config.json
 ```
 
+The actual-data renderer uses Basemap GSHHS/ETOPO data. A fresh environment must install the project dependencies with `pip install -e .`; the high-quality example also requires `basemap-data-hires` for `resolution=h`.
+
 Outputs are written under the `data_root` declared in `config.json`.
 
 Default outputs:

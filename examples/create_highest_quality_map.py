@@ -6,6 +6,7 @@ import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
+from euroopencharts.config import ConfigError
 from euroopencharts.actual_pipeline import run_actual_data_render
 
 
@@ -19,7 +20,11 @@ def main() -> int:
         help="Single JSON configuration file controlling downloads, sources, rendering and outputs.",
     )
     args = parser.parse_args()
-    result = run_actual_data_render(config_path=args.config)
+    try:
+        result = run_actual_data_render(config_path=args.config)
+    except ConfigError as exc:
+        print(f"EuroOpenCharts configuration error: {exc}", file=sys.stderr)
+        return 1
     print("EuroOpenCharts highest-quality actual-data-only map completed")
     for task, paths in result.items():
         print(task)

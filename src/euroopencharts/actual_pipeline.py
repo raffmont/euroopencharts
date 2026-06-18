@@ -2,10 +2,12 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 from pathlib import Path
+import importlib.util
 import json
 import zipfile
 
 from .config import EOCConfig, load_config
+from .config import ConfigError
 from .downloads import download_configured_sources
 from .mpa import process_mpa_layer
 
@@ -66,6 +68,12 @@ def _write_actual_provenance(root: Path, config: EOCConfig) -> list[Path]:
 
 
 def _render_actual_chart(root: Path, config: EOCConfig) -> list[Path]:
+    if importlib.util.find_spec("mpl_toolkits.basemap") is None:
+        raise ConfigError(
+            "The actual-data renderer requires Basemap and high-resolution Basemap data. "
+            "Install project dependencies with `pip install -e .` or install "
+            "`basemap` and `basemap-data-hires` in the active environment."
+        )
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt

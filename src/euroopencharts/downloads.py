@@ -89,7 +89,8 @@ def _download_one(config: EOCConfig, root: Path, item: dict) -> list[Path]:
 
     target = config.relpath(item["target"])
     assert target is not None
-    if not _is_inside(target, config.path.parent) and not _is_inside(target, root):
+    target = target.resolve()
+    if not _is_inside_any(target, _allowed_write_roots(config, root)):
         raise ConfigError(f"Download target must stay inside the project/config tree: {target}")
 
     required = bool(item.get("required", True))
@@ -152,3 +153,23 @@ def _is_inside(path: Path, parent: Path) -> bool:
         return True
     except ValueError:
         return False
+
+
+def _is_inside_any(path: Path, parents: list[Path]) -> bool:
+    return any(_is_inside(path, parent) for parent in parents)
+
+
+def _allowed_write_roots(config: EOCConfig, root: Path) -> list[Path]:
+    roots = [config.path.parent, root]
+    project_root = _find_project_root(config.path.parent)
+    if project_root is not None:
+        roots.append(project_root)
+    return roots
+
+
+def _find_project_root(start: Path) -> Path | None:
+    current = start.resolve()
+    for candidate in [current, *current.parents]:
+        if (candidate / "AGENTS.md").exists() and (candidate / "src").exists():
+            return candidate
+    return None

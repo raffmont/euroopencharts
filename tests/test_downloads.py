@@ -62,6 +62,27 @@ def test_download_configured_sources_writes_manifest(tmp_path: Path):
     assert metadata["source"]["license"] == "test fixture license"
 
 
+def test_subdirectory_config_can_download_to_project_data_root(tmp_path: Path):
+    project = tmp_path / "project"
+    examples = project / "examples"
+    source = tmp_path / "source.bin"
+    (project / "src").mkdir(parents=True)
+    examples.mkdir(parents=True)
+    (project / "AGENTS.md").write_text("# test project root\n", encoding="utf-8")
+    source.write_bytes(b"actual fixture bytes")
+    cfg_path = _config(examples, source.as_uri())
+    data = json.loads(cfg_path.read_text(encoding="utf-8"))
+    data["source_downloads"][0]["target"] = "../data/test-sources/fixture.bin"
+    cfg_path.write_text(json.dumps(data), encoding="utf-8")
+
+    config = load_config(cfg_path)
+    outputs = download_configured_sources(config, project / "data/out")
+    target = project / "data/test-sources/fixture.bin"
+
+    assert target in outputs
+    assert target.read_bytes() == b"actual fixture bytes"
+
+
 def test_required_download_fails_fast(tmp_path: Path):
     missing = (tmp_path / "missing.bin").as_uri()
     config = load_config(_config(tmp_path, missing, required=True))

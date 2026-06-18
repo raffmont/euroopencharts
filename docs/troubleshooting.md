@@ -8,6 +8,16 @@ Pass the path explicitly:
 python run_actual_data_only.py --config config.json
 ```
 
+## Basemap is missing
+
+The actual-data renderer requires `basemap` and `basemap-data-hires` for GSHHS coastline and ETOPO rendering. In the active virtual environment, run:
+
+```bash
+pip install -e .
+```
+
+Then rerun the example.
+
 ## MPA source missing
 
 If the layer is optional, the workflow writes `metadata/marine_protected_areas_omitted.json`.
