@@ -1,0 +1,78 @@
+{
+  "project": {
+    "name": "EuroOpenCharts",
+    "version": "0.2.0",
+    "navigation_warning": "Experimental scientific prototype. Not for navigation.",
+    "actual_data_only": true
+  },
+  "data_root": "data/actual_data_only",
+  "area": {
+    "id": "tyrrhenian-east",
+    "name": "Eastern Central-Southern Tyrrhenian Sea",
+    "crs": "EPSG:4326",
+    "west": 13.65,
+    "south": 40.48,
+    "east": 14.75,
+    "north": 41.02
+  },
+  "execution": {
+    "backend": "local",
+    "workers": 1,
+    "cache": true,
+    "resume": true
+  },
+  "outputs": {
+    "formats": ["geojson", "json", "png", "pdf", "zip"],
+    "render_chart": true,
+    "build_offline_bundle": true
+  },
+  "layers": {
+    "coastline": {
+      "enabled": true,
+      "required": true,
+      "source_id": "local_basemap_gshhs"
+    },
+    "relief_background": {
+      "enabled": true,
+      "required": true,
+      "source_id": "local_basemap_etopo1"
+    },
+    "marine_protected_areas": {
+      "enabled": true,
+      "required": false,
+      "source_id": "official_mpa_geojson",
+      "path": "data/sources/mpa/marine_protected_areas.geojson",
+      "rules_path": "data/sources/mpa/marine_protected_area_rules.json",
+      "render": true,
+      "fail_if_rules_missing_when_geometry_present": true
+    }
+  },
+  "sources": {
+    "local_basemap_gshhs": {
+      "name": "GSHHS coastlines distributed with Basemap data package",
+      "role": "coastline and land-water rendering",
+      "license": "See installed Basemap/GSHHS data license",
+      "actual_dataset": true
+    },
+    "local_basemap_etopo1": {
+      "name": "ETOPO1 shaded relief image distributed with Basemap data package",
+      "role": "relief and bathymetric background rendering, not numeric bathymetry",
+      "license": "See installed Basemap/ETOPO1 data license",
+      "actual_dataset": true
+    },
+    "official_mpa_geojson": {
+      "name": "Official or openly licensed Marine Protected Areas input",
+      "role": "MPA geometry, zones, permissions and rules",
+      "license": "MUST be provided with the actual source dataset",
+      "actual_dataset": true,
+      "notes": "Set layers.marine_protected_areas.path and rules_path to authoritative local files. The workflow never invents MPA geometries or rules."
+    }
+  },
+  "rendering": {
+    "profile": "navsafe_original",
+    "copyright_safe": true,
+    "show_chart_cell_grid": false,
+    "show_missing_layer_notes": true,
+    "show_mpa_layer": true
+  }
+}
